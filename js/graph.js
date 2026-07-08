@@ -139,15 +139,54 @@
   const act = {};             // node activity 0..1
   for (const id in NODES) act[id] = 0;
 
+  /* ---------- power-on: the stage boots when you arrive ---------- */
+  const ORDER = ['hub', 'ana', 'pla', 'imp', 'run', 'tri', 'rev'];
+  const SPOKES = ['ana', 'pla', 'imp', 'run', 'rev'];
+  let introT = -1, introDone = false;
+  const ign = {};             // per-node ignition 0..1
+  ORDER.forEach(id => ign[id] = 0);
+  let spokeP = SPOKES.map(() => 0), edgeA = 0;
+
+  function introTick(dt) {
+    introT += dt;
+    SPOKES.forEach((id, k) => {
+      spokeP[k] = Math.max(0, Math.min(1, (introT - (.15 + k * .12)) / .4));
+    });
+    ORDER.forEach((id, i) => {
+      const g = Math.max(0, Math.min(1, (introT - (.5 + i * .2)) / .35));
+      if (g > 0 && ign[id] === 0) { act[id] = 1; btns[id].classList.add('lit'); }
+      ign[id] = Math.max(ign[id], g);
+    });
+    edgeA = Math.max(0, Math.min(1, (introT - 1.85) / .5));
+    if (introT >= 2.5) {
+      introDone = true;
+      spokeP = SPOKES.map(() => 1);
+      edgeA = 1;
+    }
+  }
+
   const statusEl = document.getElementById('statusline');
+
+  /* epics drawn from the actual domain — this is a CSD, not a todo app */
+  const EPICS = [
+    'partial settlement splits',
+    'corporate-action entitlement calc',
+    'ISIN issuance validation',
+    'T2S instruction matching',
+    'custody position reconciliation',
+    'settlement penalty engine',
+    'cross-CSD realignment',
+    'DvP vs FoP instruction flows',
+  ];
+
   let legs = [];
   function compose() {
     const loops = 1 + (Math.random() < .45 ? 1 : 0);   // 1–2 triage cycles
-    const epic = count.epics + 1;
+    const epic = EPICS[count.epics % EPICS.length];
     const L = [];
     const leg = (f, t, col, dur, onA, m, fail) => L.push({ f, t, col, dur, onA, m, fail });
     const hold = (n, dur, m, fail) => L.push({ holdAt: n, dur, m, fail });
-    leg('hub', 'ana', 'signal', 1.5, () => { act.ana = 1; bump('epics'); }, '> dispatch: epic #' + epic + ' → analyst');
+    leg('hub', 'ana', 'signal', 1.5, () => { act.ana = 1; bump('epics'); }, '> dispatch: “' + epic + '” → analyst');
     hold('ana', .6, '> analyst: extracting testable intent…');
     leg('ana', 'pla', 'bone', 1.25, () => { act.pla = 1; bump('plans', 2 + Math.floor(Math.random() * 5)); }, '> coverage map → planner');
     hold('pla', .6, '> planner: composing strategy, pricing the edge cases…');
@@ -207,27 +246,30 @@
   function draw(t, packet) {
     ctx.clearRect(0, 0, W, H);
 
-    /* spokes */
+    /* spokes — draw themselves in during power-on */
     ctx.save();
     ctx.strokeStyle = COL.hair;
     ctx.setLineDash([2, 7]);
     ctx.lineWidth = 1;
-    for (const id of ['ana', 'pla', 'imp', 'run', 'rev']) {
+    SPOKES.forEach((id, k) => {
+      const p = spokeP[k];
+      if (p <= 0) return;
       ctx.beginPath();
       ctx.moveTo(pos.hub.x, pos.hub.y);
-      ctx.lineTo(pos[id].x, pos[id].y);
+      ctx.lineTo(pos.hub.x + (pos[id].x - pos.hub.x) * p,
+                 pos.hub.y + (pos[id].y - pos.hub.y) * p);
       ctx.stroke();
-    }
+    });
     ctx.restore();
 
     /* pipeline edges */
-    for (const [f, g] of PIPE) {
+    if (edgeA > 0) for (const [f, g] of PIPE) {
       const loopEdge = (f === 'run' && g === 'tri') || (f === 'tri' && g === 'run');
       const c = curve(pos[f], pos[g], bowOf(f, g));
       ctx.beginPath();
       ctx.moveTo(pos[f].x, pos[f].y);
       ctx.quadraticCurveTo(c.cx, c.cy, pos[g].x, pos[g].y);
-      ctx.strokeStyle = loopEdge ? 'rgba(232,163,61,.34)' : 'rgba(155,161,174,.22)';
+      ctx.strokeStyle = loopEdge ? `rgba(232,163,61,${.34 * edgeA})` : `rgba(155,161,174,${.22 * edgeA})`;
       ctx.lineWidth = 1.2;
       ctx.stroke();
     }
@@ -252,16 +294,18 @@
 
     /* nodes */
     for (const id in NODES) {
+      const ig = ign[id];
+      if (ig <= 0) continue;
       const n = pos[id], a = act[id];
       const hot = NODES[id]._hot ? (NODES[id]._hot = Math.max(0, NODES[id]._hot - .016), NODES[id]._hot) : 0;
       const base = NODES[id].hubby ? 'signal' : NODES[id].loop ? 'ember' : 'bone';
-      const glow = (NODES[id].hubby ? 46 + 8 * Math.sin(t * 2.1) : 30) * (0.55 + a * .8 + hot * .6);
-      ctx.globalAlpha = .5 + a * .5;
+      const glow = (NODES[id].hubby ? 46 + 8 * Math.sin(t * 2.1) : 30) * (0.55 + a * .8 + hot * .6) * ig;
+      ctx.globalAlpha = (.5 + a * .5) * ig;
       ctx.drawImage(SP[base], n.x - glow / 2, n.y - glow / 2, glow, glow);
-      ctx.globalAlpha = 1;
+      ctx.globalAlpha = ig;
       ctx.fillStyle = base === 'signal' ? COL.signal : base === 'ember' ? COL.ember : COL.bone;
       ctx.beginPath();
-      ctx.arc(n.x, n.y, NODES[id].hubby ? 6.5 : 4, 0, 7);
+      ctx.arc(n.x, n.y, (NODES[id].hubby ? 6.5 : 4) * (.4 + .6 * ig), 0, 7);
       ctx.fill();
       /* orbit ring on the hub */
       if (NODES[id].hubby) {
@@ -296,6 +340,12 @@
     cTiltX += (tiltX - cTiltX) * Math.min(1, dt * 4);
     cTiltY += (tiltY - cTiltY) * Math.min(1, dt * 4);
     stage.style.transform = `rotateX(${cTiltX.toFixed(3)}deg) rotateY(${cTiltY.toFixed(3)}deg)`;
+    if (!introDone) {
+      if (introT < 0 && r.top < innerHeight * .8) introT = 0;
+      if (introT >= 0) introTick(dt);
+      draw(t, { p: null, col: 'signal', moving: false });
+      return;
+    }
     draw(t, step(dt));
   });
 })();

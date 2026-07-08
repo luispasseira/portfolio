@@ -12,9 +12,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#05060A">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Inter+Tight:wght@300..800&family=JetBrains+Mono:ital,wght@0,300..700;1,400&display=swap">
+<link rel="preload" href="assets/fonts/Fraunces-normal-300-900-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/JetBrainsMono-normal-300-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/reset.css">
 <link rel="stylesheet" href="css/tokens.css">
 <link rel="stylesheet" href="css/type.css">
@@ -62,8 +62,8 @@
     <div class="hero-inner">
       <p class="eyebrow mono rv">PORTO · 41.19° N, 8.68° W&ensp;—&ensp;<span id="hero-clock">--:--:--</span> <span id="hero-tz">WET</span></p>
       <h1 class="rv">
-        <span class="h1-line">Luís</span>
-        <span class="h1-line h1-em">Passeira</span>
+        <span class="h1-line"><span class="h1-inner">Luís</span></span>
+        <span class="h1-line h1-em"><span class="h1-inner">Passeira</span></span>
       </h1>
       <p class="hero-role rv">Tech Lead, QA Automation — <a href="#work">Euronext Securities</a></p>
       <p class="hero-sub rv">Seven years making financial-grade software earn the word <em>reliable</em>.<br>
@@ -118,7 +118,7 @@
   <!-- ============ WORK ============ -->
   <section id="work" aria-labelledby="work-title">
     <div class="section-head rv">
-      <p class="kicker mono">02 — WORK</p>
+      <p class="kicker mono">02 <span class="ember">—</span> WORK</p>
       <h2 id="work-title">Systems where<br>a bug costs money.</h2>
     </div>
 
@@ -307,7 +307,7 @@
   <section id="human" aria-labelledby="human-title">
     <div class="human-grid">
       <figure class="plate rv" id="plate">
-        <img id="portrait-img" src="assets/portrait.png" alt="Portrait of Luís Passeira" width="712" height="796">
+        <img id="portrait-img" src="assets/portrait.png" alt="Portrait of Luís Passeira" width="683" height="688">
         <figcaption class="mono">LUÍS PASSEIRA — PORTO, PT</figcaption>
       </figure>
       <div class="human-copy">
@@ -335,27 +335,27 @@
     <div class="arsenal-grid rv">
       <div class="ars-col">
         <h3 class="mono">AUTOMATION</h3>
-        <ul role="list"><li class="w1">Cucumber</li><li class="w1">Playwright</li><li class="w2">Testim</li><li class="w2">JUnit</li><li class="w3">PowerMockito</li><li class="w3">Postman</li></ul>
+        <ul role="list"><li class="w1" data-at="Jumia · bexio · Euronext">Cucumber</li><li class="w1" data-at="Euronext">Playwright</li><li class="w2" data-at="bexio">Testim</li><li class="w2" data-at="Jumia · Farfetch · msg">JUnit</li><li class="w3" data-at="Jumia · msg">PowerMockito</li><li class="w3" data-at="everywhere">Postman</li></ul>
       </div>
       <div class="ars-col">
         <h3 class="mono">LANGUAGES</h3>
-        <ul role="list"><li class="w1">Java</li><li class="w1">JavaScript</li><li class="w2">TypeScript</li><li class="w2">SQL</li><li class="w3">PHP</li><li class="w3">C#</li><li class="w3">Solidity</li></ul>
+        <ul role="list"><li class="w1" data-at="seven years, everywhere">Java</li><li class="w1" data-at="everywhere">JavaScript</li><li class="w2" data-at="Farfetch · msg · Euronext">TypeScript</li><li class="w2" data-at="everywhere">SQL</li><li class="w3" data-at="Jumia">PHP</li><li class="w3" data-at="academic">C#</li><li class="w3" data-at="Farfetch">Solidity</li></ul>
       </div>
       <div class="ars-col">
         <h3 class="mono">FRAMEWORKS</h3>
-        <ul role="list"><li class="w1">Spring Boot</li><li class="w2">Angular</li><li class="w2">React</li><li class="w3">Symfony</li><li class="w3">Laravel</li></ul>
+        <ul role="list"><li class="w1" data-at="Jumia · Farfetch · msg">Spring Boot</li><li class="w2" data-at="msg">Angular</li><li class="w2" data-at="Farfetch · Jumia">React</li><li class="w3" data-at="Jumia">Symfony</li><li class="w3" data-at="academic">Laravel</li></ul>
       </div>
       <div class="ars-col">
         <h3 class="mono">INFRASTRUCTURE</h3>
-        <ul role="list"><li class="w1">Jenkins</li><li class="w1">Maven</li><li class="w2">Docker</li><li class="w2">Argo</li><li class="w3">OpenShift</li><li class="w3">Kafka</li><li class="w3">AWS</li></ul>
+        <ul role="list"><li class="w1" data-at="everywhere">Docker</li><li class="w1" data-at="everywhere">Jenkins</li><li class="w1" data-at="Jumia · Euronext">Kafka</li><li class="w2" data-at="msg · bexio · Euronext">Maven</li><li class="w2" data-at="Jumia · Farfetch · Euronext">AWS</li><li class="w3" data-at="msg · Euronext">OpenShift</li><li class="w3" data-at="Jumia">Graddle</li><li class="w3" data-at="bexio">Argo</li></ul>
       </div>
       <div class="ars-col">
         <h3 class="mono">DATA</h3>
-        <ul role="list"><li class="w1">OracleDB</li><li class="w2">PostgreSQL</li><li class="w2">MySQL</li><li class="w3">MongoDB</li></ul>
+        <ul role="list"><li class="w1" data-at="everywhere">PostgreSQL</li><li class="w2" data-at="msg">OracleDB</li><li class="w2" data-at="Jumia">MySQL</li><li class="w3" data-at="Farfetch">MongoDB</li></ul>
       </div>
       <div class="ars-col">
         <h3 class="mono">PRACTICE</h3>
-        <ul role="list"><li class="w1">BDD / TDD</li><li class="w1">Design Patterns</li><li class="w2">CI/CD</li><li class="w2">Architecture</li><li class="w3">Agile Coaching</li><li class="w3">AI Agents</li></ul>
+        <ul role="list"><li class="w1" data-at="the default dialect">BDD / TDD</li><li class="w1" data-at="taught, not hoarded">Design Patterns</li><li class="w2" data-at="Euronext — the Orchestra">AI Agents</li><li class="w2" data-at="everywhere">CI/CD</li><li class="w2" data-at="msg · Euronext">Architecture</li><li class="w3" data-at="msg">Agile Coaching</li></ul>
       </div>
     </div>
   </section>
@@ -374,6 +374,7 @@
 </main>
 
 <footer>
+  <p class="mono sysline" id="sysline" aria-hidden="true">SELF-TEST — RUNNING…</p>
   <p class="mono">© <span id="year">2026</span> LUÍS PASSEIRA</p>
   <p class="mono credit">DESIGNED &amp; BUILT BY <a href="https://claude.com" rel="noopener" target="_blank">CLAUDE</a> — DIRECTED BY LUÍS PASSEIRA</p>
   <p class="mono legal">Company marks belong to their respective owners and appear solely to identify past employers.</p>

@@ -18,6 +18,7 @@ uniform vec2  u_res;
 uniform float u_time;
 uniform vec2  u_mouse;   /* -1..1, aspect corrected */
 uniform float u_steps;
+uniform float u_warm;    /* 0 night → 1 golden hour, from Porto local time */
 
 float hash(vec3 p){
   p = fract(p*0.3183099 + .1);
@@ -72,16 +73,26 @@ void main(){
     float w = fbm(q*1.35 + vec3(0.0, -u_time*0.02, 0.0));
     float d = fbm(q + w*1.15);
     float slab = smoothstep(2.6, 1.0, abs(p.z - 0.9) + 0.6*abs(p.y));
-    float den = smoothstep(0.44, 0.78, d) * slab;
+    /* composed, not generated: density biased into a diagonal sweep behind the name */
+    float band = exp(-pow(dot(p.xy, vec2(-0.382, 0.924)) - 0.10, 2.0) * 1.15);
+    float den = smoothstep(0.44, 0.78, d) * slab * (0.30 + 0.85*band);
 
     if (den > 0.003){
       float a1 = exp(-length(p - L1)*1.15);
       float a2 = exp(-length(p - L2)*1.05);
-      vec3 lit = C1*a1*1.8 + C2*a2*1.7 + vec3(0.10,0.115,0.16)*0.35;
+      vec3 lit = C1*a1*(1.9 - 0.6*u_warm) + C2*a2*(1.2 + 1.3*u_warm) + vec3(0.10,0.115,0.16)*0.35;
       col += T * den * lit * stepLen * 1.9;
       T   *= exp(-den * stepLen * 3.1);
     }
     t += stepLen;
+  }
+
+  /* sparse dust behind the fog — depth-scale contrast */
+  vec2 cell = floor(gl_FragCoord.xy / 2.0);
+  float star = hash(vec3(cell, 7.0));
+  if (star > 0.9992) {
+    float tw = 0.55 + 0.45*sin(u_time*2.4 + star*90.0);
+    col += vec3(0.55, 0.58, 0.60) * tw * T * 0.5;
   }
 
   /* tonemap, vignette, grain */
@@ -116,12 +127,34 @@ void main(){
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
   const U = n => gl.getUniformLocation(prog, n);
-  const uRes = U('u_res'), uTime = U('u_time'), uMouse = U('u_mouse'), uSteps = U('u_steps');
+  const uRes = U('u_res'), uTime = U('u_time'), uMouse = U('u_mouse'), uSteps = U('u_steps'), uWarm = U('u_warm');
+
+  /* the nebula lives on Porto time: golden around dawn (~7h) and dusk (~19.5h),
+     cool teal in the dead of night */
+  function warmth() {
+    try {
+      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', hour: 'numeric', minute: 'numeric', hour12: false }).formatToParts(new Date());
+      const g = t => +(parts.find(p => p.type === t) || {}).value || 0;
+      const hr = g('hour') + g('minute') / 60;
+      const peak = c => Math.exp(-Math.pow(hr - c, 2) / 3.4);
+      return Math.min(1, peak(7.2) + peak(19.6));
+    } catch (e) { return 0.3; }
+  }
+  let warm = warmth();
+  setInterval(() => { warm = warmth(); }, 60000);
+
+  /* adaptive quality: three rungs, hysteresis, never oscillates */
+  const RUNGS = [
+    { res: 0.5,  stepMul: 1.0 },
+    { res: 0.4,  stepMul: 0.62 },
+    { res: 0.33, stepMul: 0.45 },
+  ];
+  let rung = 0, ema = 1 / 60, slow = 0, fast = 0;
 
   let w = 0, h = 0;
   function size() {
     const dpr = Math.min(devicePixelRatio || 1, 2);
-    const scale = dpr * 0.5;                       // half-res render, CSS upscale
+    const scale = dpr * RUNGS[rung].res;
     w = Math.max(2, Math.round(canvas.clientWidth * scale));
     h = Math.max(2, Math.round(canvas.clientHeight * scale));
     canvas.width = w; canvas.height = h;
@@ -131,11 +164,18 @@ void main(){
   addEventListener('resize', size, { passive: true });
 
   let mx = 0, my = 0;
-  const steps = () => (innerWidth < 900 ? 26 : 44);
+  const steps = () => Math.round((innerWidth < 900 ? 26 : 44) * RUNGS[rung].stepMul);
 
   LP.on((t, dt) => {
     if (LP.scrollY > LP.vh * 1.15) return;          // hero off screen: do nothing
     if (document.hidden) return;
+
+    ema += (dt - ema) * 0.06;
+    if (ema > 0.023) { if (++slow > 45 && rung < RUNGS.length - 1) { rung++; slow = 0; fast = 0; ema = 1 / 60; size(); } }
+    else slow = 0;
+    if (ema < 0.011) { if (++fast > 360 && rung > 0) { rung--; fast = 0; slow = 0; ema = 1 / 60; size(); } }
+    else fast = 0;
+
     const aspect = w / h;
     const tx = (LP.mouse.x * 2 - 1) * aspect * 0.62;
     const ty = -(LP.mouse.y * 2 - 1) * 0.62;
@@ -145,6 +185,7 @@ void main(){
     gl.uniform1f(uTime, t);
     gl.uniform2f(uMouse, mx, my);
     gl.uniform1f(uSteps, steps());
+    gl.uniform1f(uWarm, warm);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   });
 

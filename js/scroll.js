@@ -8,12 +8,13 @@
   const spine = document.querySelector('.spine');
   const rvs = Array.from(document.querySelectorAll('.rv'));
   const stations = Array.from(document.querySelectorAll('.station'));
+  const mlines = Array.from(document.querySelectorAll('.manifesto-line'));
 
   const smooth = !LP.reduced && LP.fine;
 
   /* ---------- fallback path: native scroll + IO ---------- */
   if (!smooth) {
-    document.documentElement.classList.add('js-scroll'); // reveal styles apply
+    document.documentElement.classList.add('js-scroll', 'native-scroll'); // reveal styles apply
     const io = new IntersectionObserver(es => {
       es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -12% 0px' });
@@ -83,6 +84,16 @@
       const p = Math.max(0, Math.min(1, (cur + innerHeight * .62 - top) / h));
       spine.style.setProperty('--spine-fill', (p * 100).toFixed(1) + '%');
     }
+
+    // manifesto: letters gain mass as you scroll through them (Fraunces wght axis)
+    mlines.forEach((el, i) => {
+      const top = tops.get(el);
+      if (top === undefined) return;
+      const raw = (cur + innerHeight * .92 - top) / (innerHeight * .72);
+      const p = Math.max(0, Math.min(1, (raw - i * .18) / .82));
+      const e = p * p * (3 - 2 * p);                       // smoothstep
+      el.style.fontWeight = Math.round(330 + 310 * e);
+    });
   });
 
   // anchor navigation must jump the *native* scroll; the lerp does the easing

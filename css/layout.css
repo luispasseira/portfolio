@@ -70,6 +70,8 @@ footer{
   padding:2.2rem var(--gutter) 2.6rem;
   border-top:1px solid var(--hair);
 }
+footer .sysline{flex-basis:100%;color:var(--dim)}
+footer .sysline b{color:var(--signal);font-weight:500}
 footer .mono{font-size:.66rem;letter-spacing:.12em;color:var(--dim)}
 footer .credit a{color:var(--mute)}
 footer .credit a:hover{color:var(--signal)}
@@ -116,11 +118,11 @@ footer .legal{flex-basis:100%;max-width:none}
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
   -webkit-mask-size:contain;mask-size:contain;
 }
-.logo-euronext{-webkit-mask-image:url(../assets/logos/euronext.svg);mask-image:url(../assets/logos/euronext.svg);aspect-ratio:367/72}
-.logo-bexio{-webkit-mask-image:url(../assets/logos/bexio.svg);mask-image:url(../assets/logos/bexio.svg);aspect-ratio:1062/242.8}
+.logo-euronext{-webkit-mask-image:url(../assets/logos/euronext.svg);mask-image:url(../assets/logos/euronext.svg);aspect-ratio:1137.6/352.744}
+.logo-bexio{-webkit-mask-image:url(../assets/logos/bexio.svg?v=2);mask-image:url(../assets/logos/bexio.svg?v=2);aspect-ratio:740/242.8}
 .logo-msg{-webkit-mask-image:url(../assets/logos/msg.svg);mask-image:url(../assets/logos/msg.svg);aspect-ratio:98/32}
 .logo-farfetch{-webkit-mask-image:url(../assets/logos/farfetch.svg);mask-image:url(../assets/logos/farfetch.svg);aspect-ratio:340.19/42.24}
-.logo-jumia{-webkit-mask-image:url(../assets/logos/jumia.png);mask-image:url(../assets/logos/jumia.png);aspect-ratio:1/1}
+.logo-jumia{-webkit-mask-image:url(../assets/logos/jumia.png);mask-image:url(../assets/logos/jumia.png);aspect-ratio:345/69}
 
 @media (max-width:700px){
   #top-bar nav{gap:.4rem}
