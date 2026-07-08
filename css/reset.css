@@ -1,0 +1,11 @@
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{min-height:100vh}
+img,svg,canvas,video{display:block;max-width:100%}
+input,button,textarea,select{font:inherit}
+a{color:inherit}
+ul[role=list],ol[role=list]{list-style:none}
+h1,h2,h3,h4{overflow-wrap:break-word}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}

@@ -1,0 +1,36 @@
+:root{
+  /* Obsidian & Signal */
+  --void:#05060A;
+  --obsidian:#0B0E14;
+  --slate:#1A1F2B;
+  --hair:#232936;
+  --bone:#E8E4DC;
+  --mute:#9BA1AE;
+  --dim:#7C8494;
+  --signal:#56E0C8;
+  --ember:#E8A33D;
+
+  --signal-dim:rgba(86,224,200,.14);
+  --ember-dim:rgba(232,163,61,.14);
+
+  /* type scale (fluid) */
+  --fz-hero:clamp(3.4rem, 12.5vw, 11rem);
+  --fz-h2:clamp(2.1rem, 5.2vw, 4.2rem);
+  --fz-h3:clamp(1.35rem, 2.4vw, 1.9rem);
+  --fz-manifesto:clamp(1.9rem, 6.4vw, 5.4rem);
+  --fz-body:clamp(1rem, .95rem + .3vw, 1.125rem);
+  --fz-mono:clamp(.68rem, .64rem + .2vw, .8rem);
+
+  /* rhythm */
+  --gutter:clamp(1.25rem, 5vw, 6rem);
+  --section-gap:clamp(7rem, 16vh, 13rem);
+  --measure:62ch;
+
+  /* motion — one easing vocabulary */
+  --ease:cubic-bezier(.22,.9,.28,1);
+  --dur:.9s;
+
+  color-scheme:dark;
+}
+::selection{background:var(--signal);color:var(--void)}
+:focus-visible{outline:2px solid var(--signal);outline-offset:4px;border-radius:2px}

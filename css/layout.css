@@ -1,0 +1,128 @@
+html{scrollbar-color:var(--slate) var(--void)}
+html.js-scroll{overflow-anchor:none}
+
+/* ---------- smooth-scroll shell ---------- */
+html.js-scroll #page{
+  position:fixed;inset:0 0 auto 0;
+  will-change:transform;
+}
+
+/* ---------- skip link ---------- */
+.skip{
+  position:fixed;top:.75rem;left:.75rem;z-index:120;
+  padding:.55em 1em;background:var(--obsidian);color:var(--bone);
+  border:1px solid var(--hair);border-radius:3px;
+  font-family:"JetBrains Mono",monospace;font-size:.75rem;letter-spacing:.1em;
+  transform:translateY(-300%);transition:transform .3s var(--ease);
+}
+.skip:focus-visible{transform:none}
+
+/* ---------- header ---------- */
+#top-bar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem var(--gutter);
+  mix-blend-mode:normal;
+  pointer-events:none;
+}
+#top-bar::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(color-mix(in srgb,var(--void) 82%,transparent),transparent);
+  backdrop-filter:blur(2px);
+  mask-image:linear-gradient(#000 55%,transparent);
+  -webkit-mask-image:linear-gradient(#000 55%,transparent);
+}
+#top-bar>*{position:relative;pointer-events:auto}
+.monogram{
+  font-family:"Fraunces",serif;font-weight:560;font-size:1.15rem;
+  letter-spacing:.02em;color:var(--bone);
+}
+.monogram span{color:var(--signal);font-weight:300}
+#top-bar nav{display:flex;gap:clamp(1rem,3vw,2.6rem)}
+#top-bar nav a{
+  font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--mute);
+}
+#top-bar nav a:hover{color:var(--signal)}
+#progress{
+  position:absolute;left:0;bottom:0;height:1px;width:100%;
+  background:var(--signal);transform-origin:0 50%;transform:scaleX(0);
+  opacity:.85;
+}
+
+/* ---------- global section rhythm ---------- */
+main{display:block}
+section{padding:0 var(--gutter);margin-bottom:var(--section-gap)}
+.section-head{margin-bottom:clamp(2.6rem,6vh,4.5rem)}
+.section-sub{color:var(--mute);margin-top:1.6rem;max-width:56ch}
+
+/* ---------- reveal engine ---------- */
+html.js-scroll .rv{
+  opacity:0;
+  transform:translateY(2.2rem);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease);
+}
+html.js-scroll .rv.in{opacity:1;transform:none}
+
+/* ---------- footer ---------- */
+footer{
+  display:flex;flex-wrap:wrap;gap:.8rem 2.5rem;align-items:baseline;
+  padding:2.2rem var(--gutter) 2.6rem;
+  border-top:1px solid var(--hair);
+}
+footer .mono{font-size:.66rem;letter-spacing:.12em;color:var(--dim)}
+footer .credit a{color:var(--mute)}
+footer .credit a:hover{color:var(--signal)}
+footer .legal{flex-basis:100%;max-width:none}
+
+/* ---------- boot overlay ---------- */
+#boot{
+  position:fixed;inset:0;z-index:200;
+  background:var(--void);
+  display:flex;align-items:flex-end;
+  padding:2.2rem var(--gutter);
+  transition:opacity .5s var(--ease),visibility .5s;
+}
+#boot.done{opacity:0;visibility:hidden}
+#boot pre{
+  font-family:"JetBrains Mono",monospace;font-size:.72rem;line-height:1.9;
+  letter-spacing:.1em;color:var(--dim);
+}
+#boot pre b{color:var(--signal);font-weight:420}
+
+/* ---------- cursor ---------- */
+#cursor{position:fixed;inset:0;z-index:150;pointer-events:none;display:none}
+@media (hover:hover) and (pointer:fine){
+  html.js-cursor #cursor{display:block}
+  html.js-cursor{cursor:none}
+  html.js-cursor a,html.js-cursor button{cursor:none}
+}
+#cursor i,#cursor b{
+  position:absolute;top:0;left:0;border-radius:50%;
+  transform:translate(-50%,-50%);
+}
+#cursor i{width:5px;height:5px;background:var(--bone)}
+#cursor b{
+  width:34px;height:34px;border:1px solid color-mix(in srgb,var(--bone) 45%,transparent);
+  transition:width .3s var(--ease),height .3s var(--ease),border-color .3s;
+}
+#cursor.hot b{width:52px;height:52px;border-color:var(--signal)}
+
+/* ---------- logo marks (mask technique: any colour we want) ---------- */
+[class*=logo-]{
+  display:inline-block;
+  background:var(--bone);
+  -webkit-mask-position:left center;mask-position:left center;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:contain;mask-size:contain;
+}
+.logo-euronext{-webkit-mask-image:url(../assets/logos/euronext.svg);mask-image:url(../assets/logos/euronext.svg);aspect-ratio:367/72}
+.logo-bexio{-webkit-mask-image:url(../assets/logos/bexio.svg);mask-image:url(../assets/logos/bexio.svg);aspect-ratio:1062/242.8}
+.logo-msg{-webkit-mask-image:url(../assets/logos/msg.svg);mask-image:url(../assets/logos/msg.svg);aspect-ratio:98/32}
+.logo-farfetch{-webkit-mask-image:url(../assets/logos/farfetch.svg);mask-image:url(../assets/logos/farfetch.svg);aspect-ratio:340.19/42.24}
+.logo-jumia{-webkit-mask-image:url(../assets/logos/jumia.png);mask-image:url(../assets/logos/jumia.png);aspect-ratio:1/1}
+
+@media (max-width:700px){
+  #top-bar nav{gap:.4rem}
+  #top-bar nav a{font-size:.62rem;letter-spacing:.1em;padding:.6em .5em}
+}
