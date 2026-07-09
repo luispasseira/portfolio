@@ -320,22 +320,66 @@ html.js-scroll .plate.rv.in{filter:brightness(1) contrast(1) saturate(1)}
   color:var(--signal);margin-bottom:1.1rem;
   font-variation-settings:normal;
 }
-.ars-col li{line-height:1.9;border-bottom:1px dotted var(--slate);transition:color .3s var(--ease),padding-left .3s var(--ease)}
-.ars-col li:hover{color:var(--signal);padding-left:.45rem}
-/* the whisper: provenance appears only under curiosity */
+/* one quiet register for every tool; the row itself opens on hover */
+.ars-col li{
+  font-size:.94em;
+  font-weight:400;
+  color:var(--mute);
+  padding:.5em 0;
+  border-bottom:1px dotted var(--slate);
+  transition:color .5s var(--ease),padding-left .5s var(--ease),font-weight .5s var(--ease);
+}
+.ars-col li:hover{color:var(--signal);padding-left:.5rem;font-weight:560}
+/* the whisper: provenance unfolds beneath the name, as smooth as its fade */
 .ars-col li[data-at]::after{
   content:attr(data-at);
+  display:block;
   font-family:"JetBrains Mono",monospace;
-  font-size:.62rem;letter-spacing:.08em;
+  font-size:.64rem;letter-spacing:.08em;line-height:1.6;
   color:var(--dim);
-  margin-left:.7em;
+  font-weight:400;
+  max-height:0;
   opacity:0;
-  transition:opacity .35s var(--ease);
+  transform:translateY(-3px);
+  overflow:hidden;
+  transition:max-height .5s var(--ease),opacity .5s var(--ease),transform .5s var(--ease);
 }
-.ars-col li[data-at]:hover::after{opacity:1}
-.ars-col .w1{font-weight:560;color:var(--bone)}
-.ars-col .w2{font-weight:400;color:color-mix(in srgb,var(--bone) 75%,var(--mute))}
-.ars-col .w3{font-weight:330;color:var(--mute)}
+.ars-col li[data-at]:hover::after{max-height:1.8em;opacity:1;transform:none}
+
+/* the feature file: the section proves itself on big screens */
+.feature-file{
+  margin-top:clamp(3rem,7vh,5.5rem);
+  border:1px solid var(--hair);
+  border-radius:6px;
+  background:linear-gradient(170deg,var(--obsidian),color-mix(in srgb,var(--obsidian) 60%,var(--void)));
+  overflow:hidden;
+}
+.ff-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.8rem 1.4rem;
+  border-bottom:1px solid var(--hair);
+  color:var(--dim);letter-spacing:.12em;font-size:.66rem;
+}
+.ff-status{color:var(--ember);transition:color .5s var(--ease)}
+.ff-status.pass{color:var(--signal)}
+#ff-body{
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:clamp(.7rem,.66rem + .18vw,.82rem);
+  line-height:1.85;
+  letter-spacing:.03em;
+  padding:1.4rem 1.6rem 1.8rem;
+  min-height:clamp(11rem,26vh,24rem);   /* earns its keep on a 32-inch screen */
+  color:var(--mute);
+  white-space:pre-wrap;
+  margin:0;
+}
+.ff-line{min-height:1.85em}
+.ff-k{color:var(--bone);font-weight:500}
+.ff-line b{color:var(--signal);font-weight:500}
+.visually-hidden{
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;
+}
 
 /* ================= CONTACT ================= */
 #contact{

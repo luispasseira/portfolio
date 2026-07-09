@@ -347,7 +347,7 @@
       </div>
       <div class="ars-col">
         <h3 class="mono">INFRASTRUCTURE</h3>
-        <ul role="list"><li class="w1" data-at="everywhere">Docker</li><li class="w1" data-at="everywhere">Jenkins</li><li class="w1" data-at="Jumia · Euronext">Kafka</li><li class="w2" data-at="msg · bexio · Euronext">Maven</li><li class="w2" data-at="Jumia · Farfetch · Euronext">AWS</li><li class="w3" data-at="msg · Euronext">OpenShift</li><li class="w3" data-at="Jumia">Graddle</li><li class="w3" data-at="bexio">Argo</li></ul>
+        <ul role="list"><li class="w1" data-at="everywhere">Docker</li><li class="w1" data-at="everywhere">Jenkins</li><li class="w1" data-at="Jumia · Euronext">Kafka</li><li class="w2" data-at="msg · bexio · Euronext">Maven</li><li class="w2" data-at="Jumia · Farfetch · Euronext">AWS</li><li class="w3" data-at="msg · Euronext">OpenShift</li><li class="w3" data-at="Jumia">Gradle</li><li class="w3" data-at="bexio">Argo</li></ul>
       </div>
       <div class="ars-col">
         <h3 class="mono">DATA</h3>
@@ -358,6 +358,25 @@
         <ul role="list"><li class="w1" data-at="the default dialect">BDD / TDD</li><li class="w1" data-at="taught, not hoarded">Design Patterns</li><li class="w2" data-at="Euronext — the Orchestra">AI Agents</li><li class="w2" data-at="everywhere">CI/CD</li><li class="w2" data-at="msg · Euronext">Architecture</li><li class="w3" data-at="msg">Agile Coaching</li></ul>
       </div>
     </div>
+
+    <!-- the section tests itself: a feature file that types, runs, and passes -->
+    <figure class="feature-file rv" id="feature-file">
+      <figcaption class="mono ff-head"><span>qa-multiplier.feature</span><span class="ff-status" id="ff-status">● RUNNING</span></figcaption>
+      <pre id="ff-body" aria-hidden="true">Feature: Quality Multiplier
+
+  Scenario: A team needs a quality standard
+    Given seven years of financial-grade systems
+    And a stack of Cucumber, Playwright and Java
+    When an epic lands on the board
+    Then the tests write themselves
+    And the standard survives handover
+
+  Scenario: Production stays boring
+    Given the Orchestra is on duty
+    When Friday deploy meets Monday audit
+    Then nothing interesting happens</pre>
+      <p class="visually-hidden">Decorative animation: a Cucumber feature file typing itself and passing.</p>
+    </figure>
   </section>
 
   <!-- ============ CONTACT ============ -->
@@ -389,6 +408,7 @@
 <script defer src="js/portrait.js"></script>
 <script defer src="js/graph.js"></script>
 <script defer src="js/clock.js"></script>
+<script defer src="js/feature.js"></script>
 <script defer src="js/cursor.js"></script>
 </body>
 </html>
