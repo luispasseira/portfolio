@@ -184,6 +184,40 @@ html.native-scroll .manifesto-line.in{font-weight:560}
   display:grid;grid-template-columns:repeat(2,1fr);
   gap:clamp(1.4rem,2.5vw,2.2rem);
 }
+
+/* ---- first-scroll choreography: each card wipes open from its hairline,
+   rises, glints signal once, settles; the grid enters as a chord ---- */
+html.js-scroll .case.rv{
+  opacity:1;transform:none;
+  clip-path:inset(0 0 100% 0);
+  transition:border-color .5s var(--ease),transform .5s var(--ease);
+}
+html.js-scroll .case.rv.in{
+  clip-path:inset(-2% -2% -2% -2%);
+  animation:case-in 1.05s var(--ease) backwards;
+}
+html.js-scroll .case-grid .case:nth-child(2).in{animation-delay:.14s}
+html.js-scroll .case-grid .case:nth-child(3).in{animation-delay:.24s}
+html.js-scroll .case-grid .case:nth-child(4).in{animation-delay:.34s}
+@keyframes case-in{
+  from{clip-path:inset(0 0 100% 0);transform:translateY(20px) scale(.985);border-color:var(--hair)}
+  55%{border-color:color-mix(in srgb,var(--signal) 45%,var(--hair))}
+  to{clip-path:inset(-2% -2% -2% -2%);transform:none;border-color:var(--hair)}
+}
+/* chips follow their card in a small cascade */
+html.js-scroll .case.rv .chips li{opacity:0}
+html.js-scroll .case.rv.in .chips li{opacity:1;animation:chip-in .55s var(--ease) backwards}
+html.js-scroll .case.rv.in .chips li:nth-child(1){animation-delay:.5s}
+html.js-scroll .case.rv.in .chips li:nth-child(2){animation-delay:.56s}
+html.js-scroll .case.rv.in .chips li:nth-child(3){animation-delay:.62s}
+html.js-scroll .case.rv.in .chips li:nth-child(4){animation-delay:.68s}
+html.js-scroll .case.rv.in .chips li:nth-child(5){animation-delay:.74s}
+html.js-scroll .case.rv.in .chips li:nth-child(6){animation-delay:.8s}
+html.js-scroll .case.rv.in .chips li:nth-child(7){animation-delay:.86s}
+@keyframes chip-in{
+  from{opacity:0;transform:translateY(9px)}
+  to{opacity:1;transform:none}
+}
 /* ================= ORCHESTRA ================= */
 #orchestra{
   position:relative;
@@ -372,6 +406,7 @@ html.js-scroll .plate.rv.in{filter:brightness(1) contrast(1) saturate(1)}
   color:var(--mute);
   white-space:pre-wrap;
   margin:0;
+  overflow:hidden;                      /* lines surface as the box breathes open */
 }
 .ff-line{min-height:1.85em}
 .ff-k{color:var(--bone);font-weight:500}

@@ -42,6 +42,30 @@
   }
   body.textContent = '';   // the live version types it from nothing
 
+  /* ---- breathing height: the box always follows its content on a slow lerp,
+     so the page below glides — down as lines type, up when the file clears.
+     The CSS min-height is the floor it can never sink beneath. ---- */
+  let hCur = -1, floorH = 0, padB = 0;
+  function measureStatic() {
+    const cs = getComputedStyle(body);
+    floorH = parseFloat(cs.minHeight) || 0;
+    padB = parseFloat(cs.paddingBottom) || 0;
+  }
+  measureStatic();
+  addEventListener('resize', measureStatic, { passive: true });
+
+  function breathe(dt) {
+    const last = body.lastElementChild;
+    const content = last
+      ? last.getBoundingClientRect().bottom - body.getBoundingClientRect().top + padB
+      : 0;
+    const target = Math.max(content, floorH);
+    if (hCur < 0) hCur = Math.max(body.offsetHeight, floorH);
+    hCur += (target - hCur) * Math.min(1, dt * 1.55);
+    if (Math.abs(target - hCur) < .5) hCur = target;
+    body.style.height = hCur.toFixed(1) + 'px';
+  }
+
   const mk = (cls) => { const d = document.createElement('div'); d.className = 'ff-line ' + cls; body.appendChild(d); return d; };
   const CLS = { k: 'ff-k', s: 'ff-s', a: 'ff-s', 0: 'ff-s' };
 
@@ -58,6 +82,8 @@
   LP.on((t, dt) => {
     const r = box.getBoundingClientRect();
     if (r.bottom < 0 || r.top > innerHeight || document.hidden) return;
+
+    breathe(dt);
 
     acc += dt;
     const scenario = SCENARIOS[si];
@@ -98,14 +124,21 @@
       if (waitT < 2.6) return;
       waitT = 0;
       si++;
-      if (si >= SCENARIOS.length) {           // full run done: clear and restart
+      if (si >= SCENARIOS.length) {           // full run done: clear; breathe() exhales the box down
         si = 0; passed = 0;
         body.textContent = '';
         setStatus('● RUNNING');
+        mode = 'collapse';
       } else {
         mk('ff-s');                            // blank spacer line
         setStatus('● RUNNING');
+        mode = 'type';
       }
+    }
+    else if (mode === 'collapse') {           // let the page glide up before typing again
+      waitT += dt;
+      if (waitT < 1.9) return;
+      waitT = 0;
       mode = 'type';
     }
   });

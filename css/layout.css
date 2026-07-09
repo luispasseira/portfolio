@@ -1,8 +1,11 @@
 html{scrollbar-color:var(--slate) var(--void)}
 html.js-scroll{overflow-anchor:none}
 
-/* ---------- smooth-scroll shell ---------- */
-html.js-scroll #page{
+/* ---------- smooth-scroll shell ----------
+   Only the lerped desktop path fixes the page; the native-scroll
+   fallback (touch, reduced motion) must keep normal document flow
+   or the body has no height and cannot scroll at all. */
+html.js-scroll:not(.native-scroll) #page{
   position:fixed;inset:0 0 auto 0;
   will-change:transform;
 }

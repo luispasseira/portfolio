@@ -50,8 +50,7 @@ void main(){
 
   float breathe = 0.5 + 0.5*sin(u_time*0.7);
   float amount = clamp(0.22 + 0.10*breathe + u_energy*0.9, 0.0, 0.85);
-  float cell = 2.0 + u_energy*2.0;
-  float dith = step(bayer(gl_FragCoord.xy / cell), lum);
+  float dith = step(bayer(gl_FragCoord.xy / 2.5), lum);   /* fixed grid: no re-dither pop */
   vec3 dithered = mix(ink, paper, dith);
 
   vec3 col = mix(duo, dithered, amount);
@@ -107,19 +106,26 @@ void main(){
     size();
     addEventListener('resize', size, { passive: true });
 
-    let mx = .5, my = .5, energy = 0;
+    /* everything the shader sees is lerped — the pointer only sets targets,
+       so mid-animation hovers can never pop the surface */
+    let mxT = .5, myT = .5, mx = .5, my = .5, energy = 0, energyT = 0;
     plate.addEventListener('pointermove', e => {
       const r = canvas.getBoundingClientRect();
-      mx = (e.clientX - r.left) / r.width;
-      my = (e.clientY - r.top) / r.height;
-      energy = Math.min(1, energy + 0.12);
+      const nx = (e.clientX - r.left) / r.width;
+      const ny = (e.clientY - r.top) / r.height;
+      const spd = Math.hypot(nx - mxT, ny - myT);
+      energyT = Math.min(1, energyT + spd * 5 + .015);
+      mxT = nx; myT = ny;
     }, { passive: true });
 
     const uT = U('u_time'), uE = U('u_energy'), uM = U('u_mouse');
     LP.on((t, dt) => {
       const r = canvas.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight || document.hidden) return;
-      energy = Math.max(0, energy - dt * .55);
+      energyT = Math.max(0, energyT - dt * .8);
+      energy += (energyT - energy) * Math.min(1, dt * 3.2);
+      mx += (mxT - mx) * Math.min(1, dt * 7);
+      my += (myT - my) * Math.min(1, dt * 7);
       gl.uniform1f(uT, t);
       gl.uniform1f(uE, energy);
       gl.uniform2f(uM, mx, my);
