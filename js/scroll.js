@@ -20,12 +20,17 @@
     }, { rootMargin: '0px 0px 18% 0px' });   // pre-trigger below the fold: flick-scrolling never outruns the reveal
     rvs.forEach(el => io.observe(el));
     stations.forEach(el => io.observe(el));
-    if (spine) spine.style.setProperty('--spine-fill', '100%');
     LP.on(() => {
       LP.scrollY = scrollY;
       if (progress) {
         const max = document.documentElement.scrollHeight - innerHeight;
         progress.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+      }
+      // spine draws itself in past the viewport centre, same as desktop
+      if (spine) {
+        const r = spine.getBoundingClientRect();
+        const p = Math.max(0, Math.min(1, (innerHeight * .62 - r.top) / r.height));
+        spine.style.setProperty('--spine-fill', (p * 100).toFixed(1) + '%');
       }
     });
     return;

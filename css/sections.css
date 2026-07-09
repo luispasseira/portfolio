@@ -352,6 +352,7 @@ html.js-scroll .plate.rv.in{filter:brightness(1) contrast(1) saturate(1)}
 .plate figcaption{margin-top:.9rem;font-size:.62rem;color:var(--dim)}
 .human-copy p{margin-bottom:1.2rem;color:color-mix(in srgb,var(--bone) 88%,var(--mute))}
 .human-copy p:last-child{color:var(--mute);font-style:italic}
+.human-copy .kicker{color:var(--signal)}   /* .human-copy p outranks .kicker; restate the section colour */
 
 /* ================= ARSENAL ================= */
 .arsenal-grid{
