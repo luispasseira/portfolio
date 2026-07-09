@@ -139,14 +139,25 @@ html.native-scroll .manifesto-line.in{font-weight:560}
 
 /* ================= WORK ================= */
 .case{
+  --rx:0deg;--ry:0deg;--lift:0px;
   position:relative;
   border:1px solid var(--hair);
   border-radius:6px;
   background:linear-gradient(160deg,var(--obsidian),color-mix(in srgb,var(--obsidian) 55%,var(--void)));
   padding:clamp(1.6rem,3.4vw,3rem);
-  transition:border-color .5s var(--ease),transform .5s var(--ease);
+  transform:perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift));
+  transition:border-color .5s var(--ease),transform .4s var(--ease);
 }
-.case:hover{border-color:color-mix(in srgb,var(--signal) 35%,var(--hair));transform:translateY(-4px)}
+.case:hover{border-color:color-mix(in srgb,var(--signal) 35%,var(--hair));--lift:-4px}
+/* specular sheen follows the cursor (cards.js drives --lx/--ly) */
+.case::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(340px circle at var(--lx,50%) var(--ly,-40%),rgba(232,228,220,.06),transparent 70%);
+  opacity:var(--sheen,0);
+  transition:opacity .5s var(--ease);
+  pointer-events:none;
+}
+.case:hover::after{--sheen:1;opacity:1}
 .case:hover .case-mark{background:var(--signal)}
 .case-mark{transition:background .5s var(--ease)}
 .case-feature{
@@ -188,9 +199,10 @@ html.native-scroll .manifesto-line.in{font-weight:560}
 /* ---- first-scroll choreography: each card wipes open from its hairline,
    rises, glints signal once, settles; the grid enters as a chord ---- */
 html.js-scroll .case.rv{
-  opacity:1;transform:none;
+  opacity:1;
+  transform:perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift));
   clip-path:inset(0 0 100% 0);
-  transition:border-color .5s var(--ease),transform .5s var(--ease);
+  transition:border-color .5s var(--ease),transform .4s var(--ease);
 }
 html.js-scroll .case.rv.in{
   clip-path:inset(-2% -2% -2% -2%);
@@ -343,7 +355,7 @@ html.js-scroll .plate.rv.in{filter:brightness(1) contrast(1) saturate(1)}
 
 /* ================= ARSENAL ================= */
 .arsenal-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(11.5rem,1fr));
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(11.5rem,1fr));
   gap:2.6rem 2.2rem;
   border-top:1px solid var(--hair);
   padding-top:2.6rem;
@@ -365,6 +377,9 @@ html.js-scroll .plate.rv.in{filter:brightness(1) contrast(1) saturate(1)}
 }
 .ars-col li:hover{color:var(--signal);padding-left:.5rem;font-weight:560}
 /* the whisper: provenance unfolds beneath the name, as smooth as its fade */
+.ars-col .w1{font-weight:560;color:var(--bone)}
+.ars-col .w2{font-weight:400;color:color-mix(in srgb,var(--bone) 75%,var(--mute))}
+.ars-col .w3{font-weight:330;color:var(--mute)}
 .ars-col li[data-at]::after{
   content:attr(data-at);
   display:block;
@@ -465,7 +480,34 @@ html.js-scroll .contact-mail.rv.in{
   .case-meta{text-align:left}
   .contracts{grid-template-columns:1fr 1fr;gap:1.4rem}
   .manifesto-line + .manifesto-line{margin-left:1.2rem}
+  /* arsenal: two tight columns instead of one long march */
+  .arsenal-grid{grid-template-columns:repeat(2,1fr);gap:1.9rem 1.3rem}
+  .ars-col li{font-size:.88em;padding:.35em 0}
 }
-@media (max-width:430px){
-  .contracts{grid-template-columns:1fr}
+
+/* orchestra contracts: on phones the seven agents become a swipe rail */
+@media (max-width:760px){
+  .contracts{
+    display:flex;
+    grid-template-columns:none;
+    gap:.9rem;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    padding-bottom:1rem;
+    margin-left:calc(var(--gutter) * -1);
+    margin-right:calc(var(--gutter) * -1);
+    padding-left:var(--gutter);
+    padding-right:var(--gutter);
+    scrollbar-width:thin;
+    scrollbar-color:var(--slate) transparent;
+  }
+  .contracts>div{
+    flex:0 0 76%;
+    scroll-snap-align:start;
+    border:1px solid var(--hair);
+    border-radius:6px;
+    background:linear-gradient(165deg,var(--obsidian),color-mix(in srgb,var(--obsidian) 60%,var(--void)));
+    padding:1.15rem 1.25rem 1.3rem;
+  }
+  .contracts dd{font-size:.88em}
 }

@@ -17,7 +17,7 @@
     document.documentElement.classList.add('js-scroll', 'native-scroll'); // reveal styles apply
     const io = new IntersectionObserver(es => {
       es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { rootMargin: '0px 0px -12% 0px' });
+    }, { rootMargin: '0px 0px 18% 0px' });   // pre-trigger below the fold: flick-scrolling never outruns the reveal
     rvs.forEach(el => io.observe(el));
     stations.forEach(el => io.observe(el));
     if (spine) spine.style.setProperty('--spine-fill', '100%');
@@ -71,8 +71,9 @@
       progress.style.transform = `scaleX(${max > 0 ? Math.min(1, cur / max) : 0})`;
     }
 
-    // reveals
-    const line = cur + innerHeight * .86;
+    // reveals key off the REAL scroll position, not the lerp — a fast flick
+    // finds every card already animating by the time the viewport arrives
+    const line = target + innerHeight * .92;
     tops.forEach((top, el) => {
       if (el === spine) return;
       if (top < line && !el.classList.contains('in')) el.classList.add('in');
