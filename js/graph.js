@@ -179,30 +179,46 @@
     'DvP vs FoP instruction flows',
   ];
 
+  /* ---- the control room can queue an epic and listen to the stages ---- */
+  let queued = null;
+  const stageSubs = new Set();
+  function emit(stage, epic, manual) {
+    stageSubs.forEach(f => { try { f(stage, epic, manual); } catch (e) { } });
+  }
+  LP.orchestra = {
+    epics: EPICS.slice(),
+    dispatch(name) { queued = EPICS.includes(name) ? name : EPICS[0]; return queued; },
+    onStage(cb) { stageSubs.add(cb); return () => stageSubs.delete(cb); },
+  };
+
   let legs = [];
   function compose() {
+    const manual = queued !== null;
+    const epic = manual ? queued : EPICS[count.epics % EPICS.length];
+    queued = null;
     const loops = 1 + (Math.random() < .45 ? 1 : 0);   // 1–2 triage cycles
-    const epic = EPICS[count.epics % EPICS.length];
     const L = [];
     const leg = (f, t, col, dur, onA, m, fail) => L.push({ f, t, col, dur, onA, m, fail });
     const hold = (n, dur, m, fail) => L.push({ holdAt: n, dur, m, fail });
-    leg('hub', 'ana', 'signal', 1.5, () => { act.ana = 1; bump('epics'); }, '> dispatch: “' + epic + '” → analyst');
+    const ev = s => () => emit(s, epic, manual);
+    emit('dispatch', epic, manual);
+    leg('hub', 'ana', 'signal', 1.5, () => { act.ana = 1; bump('epics'); ev('analyst')(); }, '> dispatch: “' + epic + '” → analyst');
     hold('ana', .6, '> analyst: extracting testable intent…');
-    leg('ana', 'pla', 'bone', 1.25, () => { act.pla = 1; bump('plans', 2 + Math.floor(Math.random() * 5)); }, '> coverage map → planner');
+    leg('ana', 'pla', 'bone', 1.25, () => { act.pla = 1; bump('plans', 2 + Math.floor(Math.random() * 5)); ev('planner')(); }, '> coverage map → planner');
     hold('pla', .6, '> planner: composing strategy, pricing the edge cases…');
-    leg('pla', 'imp', 'bone', 1.25, () => { act.imp = 1; }, '> strategy → implementer');
+    leg('pla', 'imp', 'bone', 1.25, () => { act.imp = 1; ev('implementer')(); }, '> strategy → implementer');
     hold('imp', .8, '> implementer: writing gherkin + java steps + playwright specs…');
-    leg('imp', 'run', 'bone', 1.25, () => { act.run = 1; bump('runs'); }, '> suite → runner');
+    leg('imp', 'run', 'bone', 1.25, () => { act.run = 1; bump('runs'); ev('runner')(); }, '> suite → runner');
     hold('run', .65, '> runner: executing suite…');
     for (let i = 0; i < loops; i++) {
-      leg('run', 'tri', 'ember', .95, () => { act.tri = 1; bump('fails'); }, '> RED — assertion failed → triage', true);
+      leg('run', 'tri', 'ember', .95, () => { act.tri = 1; bump('fails'); ev('triage')(); }, '> RED — assertion failed → triage', true);
       hold('tri', .6, '> triage: diagnosing… patch attempt #' + (i + 1), true);
-      leg('tri', 'run', 'ember', .95, () => { act.run = 1; bump('runs'); }, '> patched → re-run', true);
+      leg('tri', 'run', 'ember', .95, () => { act.run = 1; bump('runs'); ev('rerun')(); }, '> patched → re-run', true);
       hold('run', .6, '> runner: executing suite…');
     }
-    leg('run', 'rev', 'signal', 1.2, () => { act.rev = 1; }, '> GREEN — suite passing → reviewer');
+    leg('run', 'rev', 'signal', 1.2, () => { act.rev = 1; ev('reviewer')(); }, '> GREEN — suite passing → reviewer');
     hold('rev', .75, '> reviewer: diff vs standards…');
-    leg('rev', 'hub', 'signal', 1.6, () => { act.hub = 1; bump('green'); }, '> approved. merged — reporting to orchestrator');
+    leg('rev', 'hub', 'signal', 1.6, () => { act.hub = 1; bump('green'); ev('done')(); }, '> approved. merged — reporting to orchestrator');
     hold('hub', .9, '> idle — awaiting next epic…');
     return L;
   }
@@ -219,6 +235,7 @@
         statusEl.classList.toggle('fail', !!leg.fail);
       }
     }
+    if (queued !== null) dt *= 3.4;          // an epic is waiting: current run fast-forwards
     lt += dt / leg.dur;
     let p = null, col = leg.col || 'signal';
     if (leg.holdAt) {

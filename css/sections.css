@@ -1,11 +1,12 @@
 /* ================= HERO ================= */
 #hero{
   position:relative;
-  min-height:100vh;min-height:100svh;
+  min-height:100vh;
   display:flex;flex-direction:column;justify-content:center;
   margin-bottom:calc(var(--section-gap) * .6);
   overflow:hidden;
 }
+@supports (min-height:100svh){ #hero{min-height:100svh} }
 #field{
   position:absolute;inset:0;width:100%;height:100%;
   z-index:0;
@@ -38,7 +39,7 @@ html.js-scroll.loaded .h1-inner{transform:none}
   -webkit-text-stroke:1px color-mix(in srgb,var(--bone) 88%,transparent);
   transition:color 1.2s var(--ease);
 }
-html.loaded .h1-em{color:var(--bone);-webkit-text-stroke:0px transparent}
+html.loaded .h1-em{color:var(--bone);-webkit-text-stroke:0 transparent}
 .hero-role{
   margin-top:2.6rem;
   font-size:clamp(1.05rem,1.6vw,1.3rem);
@@ -99,13 +100,14 @@ html.native-scroll .manifesto-line.in{font-weight:560}
 
 /* ================= TRAJECTORY ================= */
 .spine{
+  --spine-fill:0%;   /* scrubbed by scroll.js */
   position:relative;
   margin-left:clamp(.2rem,3vw,3rem);
   padding-left:clamp(1.8rem,4vw,3.4rem);
 }
 .spine::before{
   content:"";position:absolute;left:0;top:.4rem;bottom:.4rem;width:1px;
-  background:linear-gradient(var(--signal) var(--spine-fill,0%),var(--hair) var(--spine-fill,0%));
+  background:linear-gradient(var(--signal) var(--spine-fill),var(--hair) var(--spine-fill));
   transition:none;
 }
 .station{
@@ -139,7 +141,8 @@ html.native-scroll .manifesto-line.in{font-weight:560}
 
 /* ================= WORK ================= */
 .case{
-  --rx:0deg;--ry:0deg;--lift:0px;
+  --rx:0deg;--ry:0deg;--lift:0px;   /* cards.js drives these */
+  --lx:50%;--ly:-40%;--sheen:0;
   position:relative;
   border:1px solid var(--hair);
   border-radius:6px;
@@ -152,8 +155,8 @@ html.native-scroll .manifesto-line.in{font-weight:560}
 /* specular sheen follows the cursor (cards.js drives --lx/--ly) */
 .case::after{
   content:"";position:absolute;inset:0;border-radius:inherit;
-  background:radial-gradient(340px circle at var(--lx,50%) var(--ly,-40%),rgba(232,228,220,.06),transparent 70%);
-  opacity:var(--sheen,0);
+  background:radial-gradient(340px circle at var(--lx) var(--ly),rgba(232,228,220,.06),transparent 70%);
+  opacity:var(--sheen);
   transition:opacity .5s var(--ease);
   pointer-events:none;
 }
@@ -315,6 +318,75 @@ html.js-scroll .case.rv.in .chips li:nth-child(7){animation-delay:.86s}
 .telemetry b{color:var(--signal);font-weight:500;margin-left:.5em;font-variant-numeric:tabular-nums}
 .telemetry span:nth-child(4) b{color:var(--ember)}
 
+/* ---- the control room: a drawer, closed by default ---- */
+.ctrlroom{margin-top:1.4rem}
+.cr-toggle{
+  background:none;border:1px solid var(--hair);border-radius:5px;
+  color:var(--mute);
+  padding:.7em 1.1em;
+  font-size:.7rem;letter-spacing:.16em;
+  cursor:pointer;
+  transition:color .35s var(--ease),border-color .35s var(--ease);
+}
+.cr-toggle:hover{color:var(--signal);border-color:color-mix(in srgb,var(--signal) 35%,var(--hair))}
+.cr-arrow{color:var(--signal);margin-right:.4em}
+.cr-body{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .8s var(--ease);
+}
+.cr-body.open{grid-template-rows:1fr}
+.cr-inner{
+  overflow:hidden;min-height:0;
+  display:grid;grid-template-columns:minmax(15rem,22rem) 1fr;
+  gap:1.4rem;
+  align-items:start;
+}
+.cr-body.open .cr-inner{margin-top:1.2rem}
+.cr-epics{display:flex;flex-direction:column;gap:.5rem}
+.cr-chip{
+  background:linear-gradient(165deg,var(--obsidian),color-mix(in srgb,var(--obsidian) 60%,var(--void)));
+  border:1px solid var(--hair);border-radius:5px;
+  color:var(--mute);
+  text-align:left;
+  padding:.75em 1em;
+  font-size:.7rem;letter-spacing:.1em;
+  cursor:pointer;
+  transition:color .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease);
+}
+.cr-chip:hover{color:var(--bone);transform:translateX(3px)}
+.cr-chip.active{color:var(--signal);border-color:color-mix(in srgb,var(--signal) 45%,var(--hair))}
+.cr-trace-wrap{
+  border:1px solid var(--hair);border-radius:6px;
+  background:linear-gradient(170deg,var(--obsidian),color-mix(in srgb,var(--obsidian) 55%,var(--void)));
+  overflow:hidden;
+}
+.cr-trace-head{
+  padding:.7rem 1.2rem;
+  border-bottom:1px solid var(--hair);
+  color:var(--dim);font-size:.64rem;letter-spacing:.14em;
+}
+.cr-trace-head span{color:var(--signal)}
+.cr-trace{
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:clamp(.66rem,.62rem + .15vw,.76rem);
+  line-height:1.75;letter-spacing:.02em;
+  color:var(--mute);
+  margin:0;padding:1.1rem 1.3rem 1.3rem;
+  height:21rem;overflow-y:auto;
+  white-space:pre-wrap;
+  scrollbar-width:thin;scrollbar-color:var(--slate) transparent;
+}
+.tr-line{min-height:1.75em}
+.tr-h{color:var(--bone);font-weight:500}
+.tr-code{color:color-mix(in srgb,var(--bone) 72%,var(--mute))}
+.tr-fail{color:var(--ember)}
+.tr-ok{color:var(--signal)}
+.tr-dim{color:var(--dim)}
+@media (max-width:760px){
+  .cr-inner{grid-template-columns:1fr}
+  .cr-trace{height:16rem}
+}
+
 .contracts{
   margin-top:clamp(2.6rem,6vh,4rem);
   display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));
@@ -447,7 +519,7 @@ html.js-scroll .plate.rv.in{filter:brightness(1) contrast(1) saturate(1)}
   word-break:break-all;
   font-variation-settings:"opsz" 144,"SOFT" 0,"WONK" 0;
   background-image:linear-gradient(var(--signal),var(--signal));
-  background-size:0% 2px;background-position:0 100%;background-repeat:no-repeat;
+  background-size:0 2px;background-position:0 100%;background-repeat:no-repeat;
   transition:background-size .7s var(--ease),color .5s var(--ease),
              font-variation-settings .7s var(--ease);
 }

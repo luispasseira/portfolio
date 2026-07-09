@@ -292,6 +292,22 @@
       <span>SUITES GREEN <b id="t-green">0</b></span>
     </div>
 
+    <!-- the control room: closed, the section is untouched; open, you conduct it -->
+    <div class="ctrlroom">
+      <button id="cr-toggle" class="mono cr-toggle" aria-expanded="false" aria-controls="cr-body" hidden>
+        <span class="cr-arrow">▸</span> OPEN THE CONTROL ROOM — DISPATCH AN EPIC YOURSELF
+      </button>
+      <div id="cr-body" class="cr-body">
+        <div class="cr-inner">
+          <div class="cr-epics" id="cr-epics" role="group" aria-label="Choose an epic to dispatch"></div>
+          <div class="cr-trace-wrap">
+            <p class="mono cr-trace-head">AGENT TRACE — <span id="cr-epic-label">choose an epic</span></p>
+            <pre id="cr-trace" class="cr-trace" aria-hidden="true"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <dl class="contracts rv">
       <div><dt class="mono">ORCHESTRATOR</dt><dd>Receives the epic. Decomposes, dispatches, arbitrates retries, owns the definition of done.</dd></div>
       <div><dt class="mono">ANALYST</dt><dd>Reads epics and features; extracts testable intent and acceptance criteria into a coverage map.</dd></div>
@@ -394,6 +410,11 @@
 
 <footer>
   <p class="mono sysline" id="sysline" aria-hidden="true">SELF-TEST — RUNNING…</p>
+  <p class="mono try-hints" id="try-hints">TRY:
+    <button type="button" data-act="palette">[ / ] CONSOLE</button> ·
+    <button type="button" data-act="redlines">[ D ] REDLINES</button> ·
+    <button type="button" data-act="ctrlroom">[ ⌁ ] CONTROL ROOM</button>
+  </p>
   <p class="mono">© <span id="year">2026</span> LUÍS PASSEIRA</p>
   <p class="mono credit">DESIGNED &amp; BUILT BY <a href="https://claude.com" rel="noopener" target="_blank">CLAUDE</a> — DIRECTED BY LUÍS PASSEIRA</p>
   <p class="mono legal">Company marks belong to their respective owners and appear solely to identify past employers.</p>
@@ -410,6 +431,9 @@
 <script defer src="js/graph.js"></script>
 <script defer src="js/clock.js"></script>
 <script defer src="js/feature.js"></script>
+<script defer src="js/console.js"></script>
+<script defer src="js/redline.js"></script>
+<script defer src="js/palette.js"></script>
 <script defer src="js/cursor.js"></script>
 </body>
 </html>

@@ -142,6 +142,8 @@ void main(){
   }
   let warm = warmth();
   setInterval(() => { warm = warmth(); }, 60000);
+  let warmOverride = null;                    // the command palette can force a time of day
+  LP.setWarm = v => { warmOverride = (typeof v === 'number') ? Math.max(0, Math.min(1, v)) : null; };
 
   /* adaptive quality: three rungs, hysteresis, never oscillates */
   const RUNGS = [
@@ -185,7 +187,7 @@ void main(){
     gl.uniform1f(uTime, t);
     gl.uniform2f(uMouse, mx, my);
     gl.uniform1f(uSteps, steps());
-    gl.uniform1f(uWarm, warm);
+    gl.uniform1f(uWarm, warmOverride === null ? warm : warmOverride);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   });
 
