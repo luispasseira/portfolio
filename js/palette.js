@@ -58,6 +58,19 @@
     CMDS.push({ k, hint: 'set the hero sky to ' + k, run: () => { LP.setWarm && LP.setWarm(v); gotoSection('hero'); close(); } }));
   CMDS.push({ k: 'auto sky', hint: 'hero sky follows Porto time again', run: () => { LP.setWarm && LP.setWarm(null); flash('sky follows Porto again'); } });
   CMDS.push({ k: 'redlines', hint: 'reveal the design system (or press D)', run: () => { LP.redline && LP.redline.toggle(); close(); } });
+  if (!LP.reduced) CMDS.push({
+    k: 'chaos', hint: 'the site debugs itself — watch',
+    run: () => {
+      const r = LP.chaos ? LP.chaos.run() : 'unavailable';
+      if (r === true) close(); else flash(String(r));
+    },
+  });
+  /* ═══ [3D-6 glass-panes] BEGIN palette command — revert: delete this push ═══ */
+  CMDS.push({
+    k: 'depth', hint: 'glass-pane 3D scrolling (experimental toggle)',
+    run: () => { const on = LP.depth3d ? LP.depth3d.toggle() : false; flash(on ? 'depth on — sections on glass panes' : 'depth off'); },
+  });
+  /* ═══ [3D-6] END palette command ═══ */
   CMDS.push({
     k: 'copy email', hint: 'lfmpasseira30@gmail.com → clipboard',
     run: () => { try { navigator.clipboard.writeText('lfmpasseira30@gmail.com'); } catch (e) { } flash('copied ✓'); },

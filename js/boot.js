@@ -13,6 +13,18 @@
     on(fn) { LP._subs.add(fn); return () => LP._subs.delete(fn); },
   };
 
+  /* ═══ [3D] feature flags — set any to false to revert that feature ═══
+     Each 3D feature checks its flag once at init; false = feature fully
+     inert (identical to the site before it existed). The matching code
+     lives in fenced blocks marked [3D-1]…[3D-6] in portrait.js, field.js,
+     elevmap.js, depth.js, palette.js and layout.css. */
+  LP.flags = {
+    depthPortrait: true,   // [3D-1] bas-relief portrait (portrait.js)
+    nebulaDolly:   true,   // [3D-2] hero camera dolly on scroll (field.js)
+    elevationMap:  false,   // [3D-5] isometric site map (elevmap.js — or remove its <script>)
+    depthPanes:    false,  // [3D-6] glass-pane scrolling; palette "depth" toggles at runtime (depth.js)
+  };
+
   addEventListener('pointermove', e => {
     LP.mouse.x = e.clientX / innerWidth;
     LP.mouse.y = e.clientY / innerHeight;

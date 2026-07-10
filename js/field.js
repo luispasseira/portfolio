@@ -19,6 +19,9 @@ uniform float u_time;
 uniform vec2  u_mouse;   /* -1..1, aspect corrected */
 uniform float u_steps;
 uniform float u_warm;    /* 0 night → 1 golden hour, from Porto local time */
+/* ═══ [3D-2 nebula-dolly] BEGIN uniform — revert: LP.flags.nebulaDolly=false ═══ */
+uniform float u_dolly;   /* 0 at page top → ~1.15 as the hero leaves */
+/* ═══ [3D-2] END uniform ═══ */
 
 float hash(vec3 p){
   p = fract(p*0.3183099 + .1);
@@ -44,6 +47,10 @@ void main(){
   vec2 uv = (gl_FragCoord.xy*2.0 - u_res) / u_res.y;
 
   vec3 ro = vec3(0.0, 0.0, -2.6);
+  /* ═══ [3D-2 nebula-dolly] BEGIN camera — scrolling pushes the lens into
+     the volume so the wisps slide past with real parallax ═══ */
+  ro.z += u_dolly * 1.9;
+  /* ═══ [3D-2] END camera ═══ */
   vec3 rd = normalize(vec3(uv, 1.55));
 
   /* lights */
@@ -57,7 +64,9 @@ void main(){
 
   vec3 col = vec3(0.0);
   float T = 1.0;
-  float t = 0.9;
+  /* ═══ [3D-2 nebula-dolly] march starts nearer the lens as we dolly in,
+     so wisps wash past the camera instead of popping ═══ */
+  float t = 0.9 - u_dolly * 0.5;
   float stepLen = 2.6 / u_steps;
 
   for (int i=0; i<48; i++){
@@ -128,6 +137,10 @@ void main(){
 
   const U = n => gl.getUniformLocation(prog, n);
   const uRes = U('u_res'), uTime = U('u_time'), uMouse = U('u_mouse'), uSteps = U('u_steps'), uWarm = U('u_warm');
+  /* ═══ [3D-2 nebula-dolly] BEGIN JS — revert: LP.flags.nebulaDolly=false ═══ */
+  const uDolly = U('u_dolly');
+  const dollyOn = (LP.flags && LP.flags.nebulaDolly) ? 1 : 0;
+  /* ═══ [3D-2] END JS ═══ */
 
   /* the nebula lives on Porto time: golden around dawn (~7h) and dusk (~19.5h),
      cool teal in the dead of night */
@@ -188,6 +201,8 @@ void main(){
     gl.uniform2f(uMouse, mx, my);
     gl.uniform1f(uSteps, steps());
     gl.uniform1f(uWarm, warmOverride === null ? warm : warmOverride);
+    /* ═══ [3D-2 nebula-dolly] per-frame camera position from scroll ═══ */
+    gl.uniform1f(uDolly, dollyOn * Math.max(0, Math.min(1.15, LP.scrollY / LP.vh)));
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   });
 

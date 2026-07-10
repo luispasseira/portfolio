@@ -20,6 +20,10 @@ varying vec2 v;
 uniform sampler2D u_tex;
 uniform float u_time, u_energy;
 uniform vec2 u_mouse;
+/* ═══ [3D-1 depth-portrait] BEGIN uniforms — revert: LP.flags.depthPortrait=false ═══ */
+uniform float u_relief;   /* 0 = feature off (identical to pre-3D output) */
+uniform vec2  u_view;     /* lerped cursor offset from centre, -1..1 */
+/* ═══ [3D-1] END uniforms ═══ */
 
 float bayer(vec2 p){
   vec2 q = floor(mod(p, 4.0));
@@ -32,11 +36,28 @@ float bayer(vec2 p){
   return (m+0.5)/16.0;
 }
 
+/* ═══ [3D-1 depth-portrait] BEGIN height helper ═══
+   pseudo-depth from luminance: the dark subject sits nearer than the
+   light backdrop, so height = inverted brightness */
+float hgt(vec2 p){
+  vec3 s = texture2D(u_tex, p).rgb;
+  return 1.0 - dot(s, vec3(0.299,0.587,0.114));
+}
+/* ═══ [3D-1] END height helper ═══ */
+
 void main(){
   vec2 uv = v;
   vec2 dm = uv - u_mouse;
   float d = length(dm);
   uv += normalize(dm + 1e-5) * 0.05 * u_energy * exp(-d*d*22.0);
+
+  /* ═══ [3D-1 depth-portrait] BEGIN parallax — the head rounds forward of
+     the shoulders as the cursor (or the idle drift) moves ═══ */
+  float h0 = (hgt(uv)
+            + hgt(uv + vec2( 0.008, 0.0)) + hgt(uv + vec2(-0.008, 0.0))
+            + hgt(uv + vec2( 0.0,  0.008)) + hgt(uv + vec2( 0.0, -0.008))) * 0.2;
+  uv += u_view * h0 * 0.045 * u_relief;
+  /* ═══ [3D-1] END parallax ═══ */
 
   vec3 c = texture2D(u_tex, uv).rgb;
   float lum = dot(c, vec3(0.299,0.587,0.114));
@@ -54,6 +75,21 @@ void main(){
   vec3 dithered = mix(ink, paper, dith);
 
   vec3 col = mix(duo, dithered, amount);
+
+  /* ═══ [3D-1 depth-portrait] BEGIN relief shading — a normal from the
+     height gradient, lit from the cursor side, with a faint signal rim.
+     u_relief = 0 leaves col untouched. ═══ */
+  if (u_relief > 0.0) {
+    float e = 0.006;
+    float gx = hgt(uv + vec2(e, 0.0)) - hgt(uv - vec2(e, 0.0));
+    float gy = hgt(uv + vec2(0.0, e)) - hgt(uv - vec2(0.0, e));
+    vec3 nrm  = normalize(vec3(-gx * 6.0, -gy * 6.0, 1.0));
+    vec3 ldir = normalize(vec3(u_view * 1.4 + vec2(0.15, -0.2), 0.85));
+    float lam = clamp(dot(nrm, ldir), 0.0, 1.0);
+    col *= mix(1.0, 0.86 + 0.26 * lam, u_relief);
+    col += vec3(0.337, 0.878, 0.784) * pow(clamp(1.0 - nrm.z, 0.0, 1.0) * 1.7, 2.0) * 0.09 * u_relief;
+  }
+  /* ═══ [3D-1] END relief shading ═══ */
 
   /* plate vignette */
   float vig = smoothstep(0.98, 0.55, max(abs(v.x-.5), abs(v.y-.5))*2.0);
@@ -119,6 +155,10 @@ void main(){
     }, { passive: true });
 
     const uT = U('u_time'), uE = U('u_energy'), uM = U('u_mouse');
+    /* ═══ [3D-1 depth-portrait] BEGIN JS — revert: LP.flags.depthPortrait=false ═══ */
+    const uRel = U('u_relief'), uView = U('u_view');
+    const reliefOn = (LP.flags && LP.flags.depthPortrait) ? 1 : 0;
+    /* ═══ [3D-1] END JS ═══ */
     LP.on((t, dt) => {
       const r = canvas.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight || document.hidden) return;
@@ -129,6 +169,12 @@ void main(){
       gl.uniform1f(uT, t);
       gl.uniform1f(uE, energy);
       gl.uniform2f(uM, mx, my);
+      /* ═══ [3D-1 depth-portrait] BEGIN per-frame — cursor view + idle drift ═══ */
+      gl.uniform1f(uRel, reliefOn);
+      gl.uniform2f(uView,
+        (mx - .5) + 0.055 * Math.sin(t * .35),
+        (my - .5) + 0.045 * Math.cos(t * .28));
+      /* ═══ [3D-1] END per-frame ═══ */
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     });
   }
