@@ -340,6 +340,64 @@
         <p class="rv">Knowledge can fill a room without taking up space. Think twice, build once.</p>
       </div>
     </div>
+
+    <!-- the court: same six people, same job — the net becomes the quality gate -->
+    <figure class="court rv" id="court" role="img"
+            aria-label="A volleyball court formation transforming into an engineering delivery workflow — the net becomes the quality gate.">
+      <div class="court-scroll">
+        <svg id="court-svg" viewBox="0 0 1000 280" aria-hidden="true">
+          <!-- court boundary + attack lines (fade in workflow state) -->
+          <g id="c-bound" fill="none" stroke="var(--hair)">
+            <rect x="60" y="30" width="740" height="220" rx="2"/>
+            <line x1="330" y1="30" x2="330" y2="250" stroke-dasharray="1 5"/>
+            <line x1="530" y1="30" x2="530" y2="250" stroke-dasharray="1 5"/>
+          </g>
+          <!-- opponent ghosts -->
+          <g id="c-ghosts" fill="var(--dim)" opacity=".24">
+            <circle cx="600" cy="95" r="3.5"/><circle cx="600" cy="235" r="3.5"/><circle cx="720" cy="165" r="3.5"/>
+          </g>
+          <!-- lead ↔ team connections (workflow state only) -->
+          <g id="c-spokes" stroke="var(--hair)" opacity="0">
+            <line/><line/><line/><line/><line/>
+          </g>
+          <!-- everyone sends into the gate (workflow state only) -->
+          <g id="c-sends" stroke="var(--slate)" opacity="0">
+            <line/><line/><line/><line/><line/>
+          </g>
+          <!-- the line that never moves (it does — but only in space) -->
+          <line id="c-net" x1="430" y1="24" x2="430" y2="256" stroke="var(--mute)" stroke-dasharray="3 6" opacity=".7"/>
+          <text id="c-netlabel" x="430" y="14" text-anchor="middle"
+                font-family="'JetBrains Mono',monospace" font-size="11" letter-spacing="2" fill="var(--dim)">NET</text>
+          <!-- ball / work path: receive → set → the opposite finishes -->
+          <path id="c-path" fill="none" stroke="var(--ember)" stroke-width="1.1" opacity=".55"
+                d="M 170 165 L 340 165 L 340 90 L 560 170"/>
+          <!-- terminal marks: point scored ↔ merged -->
+          <g id="c-pt" opacity="1">
+            <circle cx="560" cy="170" r="4.5" fill="none" stroke="var(--ember)"/>
+            <circle cx="560" cy="170" r="1.6" fill="var(--ember)"/>
+          </g>
+          <g id="c-ok" opacity="0" stroke="var(--signal)" fill="none" stroke-width="2">
+            <path d="M 852 170 L 858 176 L 870 162"/>
+          </g>
+          <!-- the six — five plain, one lead (the opposite: the finisher) -->
+          <g fill="var(--bone)" opacity=".85">
+            <circle class="c-dot" cx="170" cy="90" r="4.5"/>
+            <circle class="c-dot" cx="170" cy="165" r="4.5"/>
+            <circle class="c-dot" cx="170" cy="240" r="4.5"/>
+            <circle class="c-dot" cx="340" cy="165" r="4.5"/>
+            <circle class="c-dot" cx="340" cy="240" r="4.5"/>
+          </g>
+          <circle id="c-lead" cx="340" cy="90" r="6" fill="var(--signal)"/>
+          <!-- the traveling work item -->
+          <circle id="c-ball" r="2.6" fill="var(--ember)" opacity="0"/>
+        </svg>
+      </div>
+      <div class="court-captions mono">
+        <p class="cc-a">LEIXÕES SC — CAPTAIN &amp; OPPOSITE&ensp;·&ensp;read the play, finish the point</p>
+        <p class="cc-b">EURONEXT — TECH LEAD&ensp;·&ensp;read the epic, put the team in the best position</p>
+      </div>
+      <figcaption>The net never moved. It just became the quality gate.</figcaption>
+    </figure>
   </section>
 
   <!-- ============ ARSENAL ============ -->
@@ -434,6 +492,9 @@
 <script defer src="js/console.js"></script>
 <script defer src="js/redline.js"></script>
 <script defer src="js/palette.js"></script>
+<script defer src="js/court.js"></script>
+<script defer src="js/tab.js"></script>
+<script defer src="js/chaos.js"></script>
 <script defer src="js/cursor.js"></script>
 </body>
 </html>

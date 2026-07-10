@@ -230,7 +230,7 @@
     const leg = legs[li];
     if (leg !== spoke) {
       spoke = leg;
-      if (statusEl && leg.m) {
+      if (statusEl && leg.m && !statusEl.dataset.lock) {   // chaos.js may hold the line
         statusEl.textContent = leg.m;
         statusEl.classList.toggle('fail', !!leg.fail);
       }

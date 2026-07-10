@@ -83,6 +83,92 @@ footer .try-hints button{
 }
 footer .try-hints button:hover{color:var(--signal)}
 
+/* ---------- the self-debug (chaos.js) ---------- */
+/* the floating console: the site thinking out loud */
+#chaos-console{
+  position:fixed;right:1rem;bottom:1rem;z-index:160;
+  width:min(380px,calc(100vw - 2rem));
+  background:color-mix(in srgb,var(--obsidian) 96%,var(--signal));
+  border:1px solid var(--hair);
+  border-radius:6px;
+  box-shadow:0 24px 60px rgba(0,0,0,.55);
+  overflow:hidden;
+  transform:translateY(calc(100% + 2rem));
+  opacity:0;
+  transition:transform .7s var(--ease),opacity .7s var(--ease);
+  pointer-events:none;
+}
+#chaos-console.show{transform:none;opacity:1}
+#chaos-console .cc-head{
+  display:flex;align-items:center;gap:.6em;
+  padding:.6rem 1rem;
+  border-bottom:1px solid var(--hair);
+  font-size:.62rem;letter-spacing:.16em;color:var(--dim);
+}
+#chaos-console .cc-head i{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--ember);
+  animation:cc-pulse 1.4s ease-in-out infinite;
+}
+@keyframes cc-pulse{0%,100%{opacity:1}50%{opacity:.25}}
+#chaos-console pre{
+  margin:0;padding:.8rem 1rem 1rem;
+  height:10.5rem;overflow-y:auto;
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:.66rem;line-height:1.8;letter-spacing:.03em;
+  color:var(--mute);
+  white-space:pre-wrap;
+  scrollbar-width:thin;scrollbar-color:var(--slate) transparent;
+}
+.cc-line{min-height:1.8em}
+
+/* the scanline: the site reading itself */
+#scanline{
+  position:fixed;left:0;right:0;top:42vh;height:1px;z-index:120;
+  background:linear-gradient(90deg,transparent,var(--signal) 18%,var(--signal) 82%,transparent);
+  box-shadow:0 0 14px rgba(86,224,200,.5);
+  opacity:0;
+  transition:opacity .6s var(--ease);
+  pointer-events:none;
+}
+#scanline.show{opacity:.5}
+
+/* transient inspection marks (redline dialect) */
+.scan-mark{
+  position:fixed;z-index:130;pointer-events:none;
+  border:1px dashed color-mix(in srgb,var(--signal) 55%,transparent);
+  border-radius:4px;
+}
+.scan-mark.bad{border-color:color-mix(in srgb,var(--ember) 70%,transparent)}
+.scan-mark span{
+  position:absolute;top:-1.7rem;left:-1px;
+  white-space:nowrap;
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:.6rem;letter-spacing:.08em;
+  color:var(--signal);
+  background:color-mix(in srgb,var(--void) 88%,transparent);
+  border:1px solid color-mix(in srgb,var(--signal) 35%,var(--hair));
+  border-radius:3px;
+  padding:.25em .6em;
+}
+.scan-mark.bad span{
+  color:var(--ember);
+  border-color:color-mix(in srgb,var(--ember) 45%,var(--hair));
+}
+
+/* the bug catalog: quiet defects, smooth heals.
+   .bug-anim persists through the heal so the recovery eases. */
+.bug-anim{
+  transition:transform .9s var(--ease),letter-spacing .9s var(--ease),
+             opacity .9s var(--ease),color .9s var(--ease)!important;
+}
+.bug-tilt{transform:rotate(1.7deg) translateY(6px)!important}
+.bug-flip{transform:scaleX(-1)!important}
+.bug-track{letter-spacing:.32em!important}
+.bug-dim{opacity:.3!important}
+.bug-slide{transform:translateX(22px)!important}
+.bug-offbyone{color:var(--ember)!important}
+
 /* ---------- command palette (press /) ---------- */
 #palette{
   position:fixed;inset:0;z-index:180;

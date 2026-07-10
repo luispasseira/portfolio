@@ -422,6 +422,35 @@ html.js-scroll .plate.rv.in{filter:brightness(1) contrast(1) saturate(1)}
 .plate img,.plate canvas{width:100%;height:auto;aspect-ratio:683/688}
 .plate canvas{position:absolute;inset:clamp(.8rem,1.6vw,1.3rem);width:calc(100% - 2*clamp(.8rem,1.6vw,1.3rem));height:auto}
 .plate figcaption{margin-top:.9rem;font-size:.62rem;color:var(--dim)}
+/* ---- the court: the formation that became a team (quiet — no chrome) ---- */
+.court{
+  margin-top:clamp(2rem,4.5vh,3.2rem);
+  max-width:44rem;
+  opacity:.92;
+}
+.court-scroll{overflow-x:auto;scrollbar-width:thin;scrollbar-color:var(--slate) transparent}
+#court-svg{width:100%;min-width:540px;height:auto;display:block}
+.court-captions{position:relative;min-height:1.5em;margin-top:.3rem}
+.court-captions p{
+  font-size:.6rem;letter-spacing:.13em;color:var(--dim);
+  max-width:none;margin:0;
+  transition:opacity .8s var(--ease);
+}
+/* live: the two captions trade places with the morph */
+.court.live .court-captions p{position:absolute;inset:0 auto auto 0}
+.court.live .cc-b{opacity:0}
+.court.live.stateB .cc-a{opacity:0}
+.court.live.stateB .cc-b{opacity:1}
+/* static (reduced motion / no JS): both truths at once */
+.court.static .court-captions p+p,.court:not(.live):not(.static) .court-captions p+p{margin-top:.3rem}
+.court figcaption{
+  margin-top:.8rem;
+  font-family:"Fraunces",Georgia,serif;
+  font-style:italic;
+  font-size:clamp(.85rem,1.4vw,1rem);
+  color:var(--dim);
+}
+
 .human-copy p{margin-bottom:1.2rem;color:color-mix(in srgb,var(--bone) 88%,var(--mute))}
 .human-copy p:last-child{color:var(--mute);font-style:italic}
 .human-copy .kicker{color:var(--signal)}   /* .human-copy p outranks .kicker; restate the section colour */
